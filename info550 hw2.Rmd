@@ -1,0 +1,100 @@
+---
+title: 'Introduction to the Steam data'
+author: "Tianxin Wang"
+date: "2021/9/23"
+output: html_document
+---
+1.Data Cleaning
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+steam0<- read.csv("E:\\steam0.csv",sep=",")
+clean0<- steam0[-which(steam0$average_playtime==steam0$median_playtime),]
+steam1<- read.csv("E:\\steam1.csv",sep=",")
+clean1<- steam1[-which(steam1$average_playtime==steam1$median_playtime),]
+clean<- rbind(clean0,clean1)
+write.csv(clean,file="E:/clean.csv")
+```
+For the data cleaning step I delete all the games whose average playtime is exactly the same as median playtime, since this weird occasion indicate that only one player offer the playtime. In that case the owner amount is not convincible for the popularity of a game. The cleaned version has 3189 games left.
+
+2.Genres
+```{r}
+library(stringr)
+library(ggplot2)
+clean$genres_number<- str_count(clean$genres,";")+1
+p<-ggplot(clean,aes(genres_number))+
+  geom_bar()
+p
+```
+I plan to get start from the game genres. However, there are many games labeled more gernes, so I create a new variable to record the amount of genres of a game and show the frequency.We can see that most games choose 2 or 3 genre labels. This sounds reasonable because sometimes too much genres will confuse the players.
+```{r}
+library(VennDiagram)
+library(grid)
+library(futile.logger)
+clean$act<- str_count(clean$genres,"Action")
+clean$rpg<- str_count(clean$genres,"RPG")
+clean$adv<- str_count(clean$genres,"Adventure")
+clean$stg<- str_count(clean$genres,"Strategy")
+clean$cas<- str_count(clean$genres,"Casual")
+nrow(clean[which(clean$act=="1"),])
+#same operation on other genres
+nrow(clean[which(clean$act=="1"&clean$rpg=="1"),])
+#same operation on other two genres combinations
+nrow(clean[which(clean$act=="1"&clean$rpg=="1"&clean$adv=="1"),])
+#same operation on other three genres combinations
+nrow(clean[which(clean$rpg=="1"&clean$adv=="1"&clean$stg=="1"&clean$cas=="1"),])
+#same operation on other four genres combinations
+nrow(clean[which(clean$act=="1"&clean$rpg=="1"&clean$adv=="1"&clean$stg=="1"&clean$cas=="1"),])
+venn.plot1<- draw.quintuple.venn(
+  area1 = 1727,area2 = 658,area3 = 1175,area4 = 666,area5 = 814,
+  n12 = 319,n13 = 686,n14 = 213,n15 = 326,
+  n23 = 319,n24 = 159,n25 = 110,
+  n34 = 138,n35 = 296,
+  n45 = 172,
+  n123 = 187,n124 = 55,n125 = 46,
+  n134 = 66,n135 = 143,n145 = 57,
+  n234 = 74,n235 = 75,n245 = 35,n345 = 49,
+  n1234 = 34,n1235 = 38,n1245 = 13,n1345 = 24,n2345 = 26,
+  n12345 = 11,
+  category=c("Action","RPG","Adventure","strategy","Casual"),
+  fill=c("orchid3","dodgerblue","green","pink","yellow"))
+grid.newpage()
+```
+I choose 5 genres: Action,RPG,Adventure,Strategy and Casual, and draw this Venn picture to show the overlap relationship of these genres. It seem like the combination of Action and Adventure is most common.
+
+3.Platform
+```{r}
+table(clean$platforms)
+library(VennDiagram)
+library(grid)
+library(futile.logger)
+venn.plot<- draw.pairwise.venn(
+  area1=967,
+  area2=1281,
+  cross.area=900,
+  category=c("Windows&linux","windows&mac"),
+  fill=c("pink","yellow"))
+grid.newpage()
+```
+It is no doubt that all the games fit the windows platform, and the only-windows games still have the most percentage among all the games, their amounts(1841) are more than twice of the all-three-platforms games'(900).
+
+4.Price
+```{r}
+mean(clean$price)
+clean$free_to_play<- ifelse(clean$price=="0",c("Yes"),c("No"))
+table(clean$free_to_play)
+aggregate(clean$price,list(clean$free_to_play),mean)
+```
+Among all the games, the average price is 7.72. While among the 2711 non-free-to-play games the average is 9.09.
+
+5.Something interesting 
+```{r}
+dorder<- clean[order(as.Date(clean$release_date)),]
+dorder[1,2]
+dorder[1,3]
+```
+The earliest game on steam is"Half-Life", released on Nov.8th,1998, developed by Valve.
+```{r}
+table(clean$owners)
+clean[which(clean$owners=="100000000-200000000"),2]
+```
+The most-owners game on steam is "DOTA2", has more than one hundred thousand owners, also developed by Valve. I guess Valve is the most popular game developer on steam.
