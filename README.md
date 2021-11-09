@@ -12,6 +12,6 @@ install.packages(futile.logger)
 ## analysis
 To execute the analysis, you can run the rmd file in the same folder.
 ```
-Rscript -e "rmarkdown::render('info550 hw2.Rmd')"
+Rscript -e "rmarkdown::render('info550_hw2.Rmd')"
 ```
 This will lead to a html output file that contains the results about the games' gernes, platform and price etc.
