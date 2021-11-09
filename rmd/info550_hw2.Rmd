@@ -5,7 +5,7 @@ date: "2021/9/23"
 output: html_document
 ---
 1.Data Cleaning
-```{r setup, include=FALSE}
+```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 steam0<- read.csv("./steam0.csv",sep=",")
 clean0<- steam0[-which(steam0$average_playtime==steam0$median_playtime),]
