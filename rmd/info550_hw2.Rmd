@@ -7,12 +7,14 @@ output: html_document
 1.Data Cleaning
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
-steam0<- read.csv("./steam0.csv",sep=",")
+here::i_am("info550/rmd/info550_hw2.Rmd")
+
+steam0<- read.csv(here("info550/raw_data","steam0.csv"),sep=",")
 clean0<- steam0[-which(steam0$average_playtime==steam0$median_playtime),]
-steam1<- read.csv("./steam1.csv",sep=",")
+steam1<- read.csv(here("info550/raw_data","steam1.csv"),sep=",")
 clean1<- steam1[-which(steam1$average_playtime==steam1$median_playtime),]
 clean<- rbind(clean0,clean1)
-write.csv(clean,file="E:/clean.csv")
+write.csv(clean,file="info550/cleandata/clean.csv")
 ```
 For the data cleaning step I delete all the games whose average playtime is exactly the same as median playtime, since this weird occasion indicate that only one player offer the playtime. In that case the owner amount is not convincible for the popularity of a game. The cleaned version has 3189 games left.
 
