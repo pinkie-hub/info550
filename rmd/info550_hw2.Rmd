@@ -8,6 +8,7 @@ output: html_document
 ```{r setup}
 knitr::opts_chunk$set(echo = TRUE)
 here::i_am("info550/rmd/info550_hw2.Rmd")
+knitr::opts_knit$set(root.dir=here::here())
 
 steam0<- read.csv(here("info550/raw_data","steam0.csv"),sep=",")
 clean0<- steam0[-which(steam0$average_playtime==steam0$median_playtime),]
