@@ -10,6 +10,23 @@ install.packages(grid)
 install.packages(futile.logger)
 ```
 ## analysis
+### pull the image
+```
+docker pull pinkielittlepainter/foralltime
+```
+### clone the repository
+```
+git clone https://github.com/pinkie-hub/info550.git
+cd info550
+```
+### build the image
+```
+docker build -t info550 .
+```
+```
+docker run -it info550
+```
+
 To execute the analysis, you can run the rmd file in the same folder.
 press R
 tap
